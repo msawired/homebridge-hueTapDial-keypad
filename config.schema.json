@@ -1,8 +1,8 @@
 {
-  "pluginAlias": "Hue",
+  "pluginAlias": "HueDialKeypad",
   "pluginType": "platform",
   "singular": true,
-  "headerDisplay": "Homebridge plugin for Philips Hue.",
+  "headerDisplay": "Homebridge plugin exposing only the Philips Hue Tap Dial (RDM002) as a keypad with password logic.",
   "footerDisplay": "For a detailed description, see the [wiki](https://github.com/ebaauw/homebridge-hue/wiki/Configuration)",
   "schema": {
     "type": "object",
@@ -11,7 +11,39 @@
         "description": "Plugin name as displayed in the Homebridge log.",
         "type": "string",
         "required": true,
-        "default": "Hue"
+        "default": "Hue Dial Keypad"
+      },
+      "password": {
+        "description": "Keypad password (digits 1-4). Default: 1234.",
+        "type": "string",
+        "default": "1234"
+      },
+      "userId": {
+        "description": "Bridge ID (16 hex chars) for the credential below. Optional convenience field for Config UI.",
+        "type": "string"
+      },
+      "userToken": {
+        "description": "Hue API username (token) for the bridge above. Optional convenience field for Config UI.",
+        "type": "string"
+      },
+      "users": {
+        "type": "object",
+        "patternProperties": {
+          "^[0-9a-fA-F]{16}$": {
+            "type": "string"
+          }
+        },
+        "minProperties": 1
+      },
+      "nativeHomeKitSensors": {
+        "description": "Don't expose sensors already exposed by the v2 (square) Hue bridge.",
+        "type": "boolean",
+        "default": false
+      }, 
+      "tapDialButtons": {
+        "description": "Expose individual button services for the Hue Tap Dial (RDM002). Default: false. When false, only the keypad success MotionSensor is exposed.",
+        "type": "boolean",
+        "default": false
       },
       "anyOn": {
         "description": "Expose state.any_on as AnyOn characteristic.",
@@ -94,11 +126,6 @@
         "type": "boolean",
         "default": true
       },
-      "nativeHomeKitSensors": {
-        "description": "Don't expose sensors already exposed by the v2 (square) Hue bridge.",
-        "type": "boolean",
-        "default": true
-      },
       "noResponse": {
         "description": "Report unreachable lights as <i>No Response</i> in HomeKit.",
         "type": "boolean"
@@ -158,15 +185,6 @@
         "minimum": 1,
         "maximum": 30
       },
-      "users": {
-        "type": "object",
-        "patternProperties": {
-          "^[A-Z0-9]{16}$": {
-            "type": "string"
-          }
-        },
-        "minProperties": 1
-      },
       "waitTimePut": {
         "description": "The time, in milliseconds, to wait after sending a PUT request, before sending the next PUT request.  Default: 50.",
         "type": "integer",
@@ -199,6 +217,19 @@
   },
   "form": [
     "name",
+    "password",
+    {
+      "type": "fieldset",
+      "title": "Tap Dial Options",
+      "items": [
+        {
+          "key": "tapDialButtons",
+          "title": "Expose Tap Dial Buttons",
+          "description": "When enabled, exposes individual button services (switches 1, 2, 4, 5, rollers 5,6) in addition to the keypad MotionSensor.",
+          "type": "checkbox"
+        }
+      ]
+    },
     {
       "key": "hosts",
       "type": "array",
@@ -208,203 +239,15 @@
         "type": "string"
       }
     },
-    "users",
     {
       "type": "fieldset",
       "expandable": true,
-      "title": "Migration",
-      "description": "Migrate Homebridge Hue2.",
+      "title": "Credentials (users map)",
+      "description": "Bridge serial → API key map. Add your bridge ID (16-char) and Hue API username here.",
       "items": [
-        "homebridgeHue2"
-      ]
-    },
-    {
-      "type": "fieldset",
-      "expandable": true,
-      "title": "Resource types",
-      "description": "Select what resource types to expose.",
-      "items": [
-        "sensors",
-        {
-          "key": "excludeSensorTypes",
-          "type": "checkboxes",
-          "titleMap": [
-            {
-              "name": "ZigBee Switch",
-              "value": "ZLLSwitch"
-            },
-            {
-              "name": "ZigBee Rotary Switch",
-              "value": "ZLLRelativeRotary"
-            },
-            {
-              "name": "ZigBee Green Power switch",
-              "value": "ZGPSwitch"
-            },
-            {
-              "name": "ZigBee Motion Sensor",
-              "value": "ZLLPresence"
-            },
-            {
-              "name": "ZigBee Light Level Sensor",
-              "value": "ZLLLightLevel"
-            },
-            {
-              "name": "ZigBee Temperature Sensor",
-              "value": "ZLLTemperature"
-            },
-            {
-              "name": "Built-in Daylight Sensor",
-              "value": "Daylight"
-            },
-            {
-              "name": "CLIP Flag",
-              "value": "CLIPGenericFlag"
-            },
-            {
-              "name": "CLIP Status",
-              "value": "CLIPGenericStatus"
-            },
-            {
-              "name": "CLIP Presence Sensor",
-              "value": "CLIPPresence"
-            },
-            {
-              "name": "CLIP Light Level Sensor",
-              "value": "CLIPLightLevel"
-            },
-            {
-              "name": "CLIP Temperature Sensor",
-              "value": "CLIPTemperature"
-            },
-            {
-              "name": "CLIP Door/Window Sensor",
-              "value": "CLIPOpenClose"
-            },
-            {
-              "name": "Geofence",
-              "value": "Geofence"
-            },
-            {
-              "name": "Any CLIP sensor",
-              "value": "CLIP"
-            }
-          ],
-          "condition": {
-            "functionBody": "return model.sensors"
-          }
-        },
-        {
-          "key": "nativeHomeKitSensors",
-          "condition": {
-            "functionBody": "return model.sensors"
-          }
-        },
-        "lights",
-        {
-          "key": "nativeHomeKitLights",
-          "condition": {
-            "functionBody": "return model.lights"
-          }
-        },
-        "groups",
-        {
-          "key": "group0",
-          "condition": {
-            "functionBody": "return model.groups"
-          }
-        },
-        {
-          "key": "anyOn",
-          "condition": {
-            "functionBody": "return model.groups"
-          }
-        },
-        {
-          "key": "rooms",
-          "condition": {
-            "functionBody": "return model.groups"
-          }
-        },
-        {
-          "key": "scenes",
-          "condition": {
-            "functionBody": "return model.groups"
-          }
-        },
-        {
-          "key": "scenesAsSwitch",
-          "condition": {
-            "functionBody": "return model.groups && model.scenes"
-          }
-        },
-        "linkButton",
-        "schedules",
-        "rules"
-      ]
-    },
-    {
-      "type": "fieldset",
-      "expandable": true,
-      "title": "How",
-      "description": "Select how to expose the resources.",
-      "items": [
-        {
-          "key": "hueDimmerRepeat",
-          "condition": {
-            "functionBody": "return model.sensors"
-          }
-        },
-        {
-          "key": "hueMotionTemperatureHistory",
-          "condition": {
-            "functionBody": "return model.sensors"
-          }
-        },
-        "resource",
-        {
-          "key": "wallSwitch",
-          "condition": {
-            "functionBody": "return model.lights"
-          }
-        }
-      ]
-    },
-    {
-      "type": "fieldset",
-      "expandable": true,
-      "title": "Advanced Settings",
-      "description": "Don't change these, unless you understand what you're doing.",
-      "items": [
-        {
-          "key": "brightnessAdjustment",
-          "condition": {
-            "functionBody": "return model.lights"
-          }
-        },
-        "configuredName",
-        "forceHttp",
-        "heartrate",
-        {
-          "key": "noResponse",
-          "condition": {
-            "functionBody": "return model.lights"
-          }
-        },
-        "ownResourcelinks",
-        "parallelRequests",
-        "resetTimeout",
-        "stealth",
-        "timeout",
-        "waitTimePut",
-        {
-          "key": "waitTimePutGroup",
-          "condition": {
-            "functionBody": "return model.groups"
-          }
-        },
-        "waitTimeResend",
-        "waitTimeUpdate"
+        "userId",
+        "userToken",
+        "users"
       ]
     }
   ]

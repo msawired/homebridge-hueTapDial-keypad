@@ -6,7 +6,7 @@
 import { HuePlatform } from './lib/HuePlatform.js'
 
 function main (homebridge) {
-  homebridge.registerPlatform('homebridge-hue', 'Hue', HuePlatform)
+  homebridge.registerPlatform('homebridge-hue-dial-keypad', 'HueDialKeypad', HuePlatform)
 }
 
 export { main as default }
