@@ -1,8 +1,8 @@
 {
-  "pluginAlias": "Hue",
+  "pluginAlias": "HueDialKeypad",
   "pluginType": "platform",
   "singular": true,
-  "headerDisplay": "Homebridge plugin for Philips Hue.",
+  "headerDisplay": "Homebridge plugin exposing only the Philips Hue Tap Dial (RDM002) as a keypad with password logic.",
   "footerDisplay": "For a detailed description, see the [wiki](https://github.com/ebaauw/homebridge-hue/wiki/Configuration)",
   "schema": {
     "type": "object",
@@ -11,7 +11,12 @@
         "description": "Plugin name as displayed in the Homebridge log.",
         "type": "string",
         "required": true,
-        "default": "Hue"
+        "default": "Hue Dial Keypad"
+      },
+      "password": {
+        "description": "Keypad password (digits 1-4). Default: 1234.",
+        "type": "string",
+        "default": "1234"
       },
       "anyOn": {
         "description": "Expose state.any_on as AnyOn characteristic.",
@@ -199,6 +204,7 @@
   },
   "form": [
     "name",
+    "password",
     {
       "key": "hosts",
       "type": "array",

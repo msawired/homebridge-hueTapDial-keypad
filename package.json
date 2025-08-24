@@ -1,13 +1,13 @@
 {
-  "name": "homebridge-hue",
-  "description": "Homebridge plugin for Philips Hue",
-  "displayName": "Homebridge Hue",
-  "author": "Erik Baauw",
+  "name": "homebridge-hue-dial-keypad",
+  "description": "Homebridge plugin exposing only the Philips Hue Tap Dial (RDM002) as a 4-button keypad with password logic",
+  "displayName": "Philips Hue Dial Keypad",
+  "author": "Sinan Ascioglu",
   "maintainers": [
-    "ebaauw"
+    "msawired"
   ],
   "license": "Apache-2.0",
-  "version": "0.14.14",
+  "version": "1.0.0",
   "keywords": [
     "homebridge-plugin",
     "homekit",
@@ -15,7 +15,11 @@
     "signify",
     "hue",
     "philipshue",
-    "philips-hue"
+    "philips-hue",
+    "tap-dial",
+    "keypad",
+    "alarm",
+    "security"
   ],
   "type": "module",
   "main": "index.js",
@@ -23,36 +27,22 @@
     "ph": "cli/ph.js"
   },
   "engines": {
-    "BSB001": "1.16.0",
-    "BSB002": "1.69.0",
-    "homebridge": "^1.9.0||^2.0.0-beta",
-    "node": "22.14.0||22||^20||^18"
+    "homebridge": "^1.9.0 || ^2.0.0-beta",
+    "node": ">=18"
   },
   "dependencies": {
     "fakegato-history": "~0.6.7",
     "hb-hue-tools": "~1.1.7",
     "homebridge-lib": "~7.1.4"
   },
-  "scripts": {
-    "prepare": "standard && rm -rf out && jsdoc -c jsdoc.json",
-    "test": "standard && echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ebaauw/homebridge-hue.git"
+    "url": "git+https://github.com/msawired/homebridge-hueTapDial-keypad.git"
   },
   "bugs": {
-    "url": "https://github.com/ebaauw/homebridge-hue/issues"
+    "url": "https://github.com/msawired/homebridge-hueTapDial-keypad/issues"
   },
-  "homepage": "https://github.com/ebaauw/homebridge-hue#readme",
-  "funding": [
-    {
-      "type": "github",
-      "url": "https://github.com/sponsors/ebaauw"
-    },
-    {
-      "type": "paypal",
-      "url": "https://www.paypal.me/ebaauw/EUR"
-    }
-  ]
+  "homepage": "https://github.com/msawired/homebridge-hueTapDial-keypad#readme"
 }
+
